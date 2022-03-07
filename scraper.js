@@ -1,6 +1,9 @@
 const puppeteer = require("puppeteer");
 const fs = require("fs");
 
+const firstPokemon = 1; // num of first pokemon you want
+const lastPokemon = 898; // num of last pokemon you want
+
 const scrapePokemon = async () => {
   // launch browser and open new page
   const browser = await puppeteer.launch({});
@@ -8,7 +11,7 @@ const scrapePokemon = async () => {
   try {
     const pokemonList = [];
 
-    for (let i = 0; i < 898; i++) {
+    for (let i = firstPokemon - 1; i < lastPokemon; i++) {
       await page.goto(`https://pokemon.com/us/pokedex/${i + 1}`);
       await page.waitForSelector(".pokemon-stats-info.active");
       // evaluate page for pokemon data
@@ -129,10 +132,17 @@ const scrapePokemon = async () => {
         const evolutions = document.querySelectorAll(".evolution-profile > li");
         pokemon.evolutions = [];
         for (let i = 0; i < evolutions.length; i++) {
-          const evoNumber = Number(
+          const evolution = {};
+          evolution.num = Number(
             evolutions[i].querySelector(".pokemon-number").innerText.slice(1)
           );
-          pokemon.evolutions.push(evoNumber);
+          evolution.name = evolutions[i]
+            .querySelector("a > h3")
+            .innerText.split(" ")[0];
+          evolution.img = evolutions[i]
+            .querySelector("a > img")
+            .getAttribute("src");
+          pokemon.evolutions.push(evolution);
         }
 
         // return the pokemon
