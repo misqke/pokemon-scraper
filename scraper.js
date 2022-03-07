@@ -142,6 +142,11 @@ const scrapePokemon = async () => {
           evolution.img = evolutions[i]
             .querySelector("a > img")
             .getAttribute("src");
+          evolution.types = [];
+          const types = evolutions[i].querySelectorAll("a > ul > li");
+          for (let i = 0; i < types.length; i++) {
+            evolution.types.push(types[i].innerText);
+          }
           pokemon.evolutions.push(evolution);
         }
 
